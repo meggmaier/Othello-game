@@ -24,11 +24,10 @@ public class OthelloGameApplication extends Application {
 
         Group root = new Group();
         VBox board = new Board().createBoard();
-        Pieces pieces = new Pieces("blank");
-        GridPane piecesOnBoard = pieces.piecesOnStartingPositions();
+        GridPane piecesOnBoard = new Pieces("x").piecesOnStartingPositions();
 
 
-        root.getChildren().addAll(board);
+        root.getChildren().addAll(board, piecesOnBoard);
 
         Scene scene = new Scene(root, 413, 483, Color.BLACK);
 
