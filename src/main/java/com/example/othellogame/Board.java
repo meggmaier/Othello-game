@@ -12,17 +12,15 @@ public class Board {
 
     private Image rectangleBack = new Image("background/table.jpg");
 
-
-
     public Group createRectangle(){
         ImageView back = new ImageView(rectangleBack);
         Group rectangle = new Group();
-        Rectangle r = new Rectangle(52, 52);
+        Rectangle r = new Rectangle(50, 50);
         r.setFill(Color.BLACK);
-        back.setFitHeight(48);
-        back.setFitWidth(48);
-        back.setX(1);
-        back.setY(1);
+        back.setFitHeight(50);
+        back.setFitWidth(50);
+        back.setX(0);
+        back.setY(0);
         rectangle.getChildren().add(r);
         rectangle.getChildren().add(back);
         return rectangle;
