@@ -56,4 +56,19 @@ public class PiecesService extends Parent {
               }
           }
     }
+
+    static void setOnStartingPositions(GridPane grid){
+
+        for(int column=0; column<8; column++) {
+            for (int row = 0; row < 8; row++) {
+                grid.add(PiecesService.createEmpty(), column, row);
+            }
+        }
+        turnPieceBlack(grid,4,3);
+        turnPieceBlack(grid,3,4);
+        turnPieceWhite(grid,3,3);
+        turnPieceWhite(grid,4,4);
+
+    }
+
 }

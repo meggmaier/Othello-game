@@ -3,52 +3,71 @@ package com.example.othellogame;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 
 @SpringBootApplication
-public class OthelloGameApplication extends Application {
+public class OthelloGameApplication extends Application implements MouseListener {
 
 
-    //private Button newGame = new Button("New Game");
-    //private Label blackPieces = new Label("Black Piece: ");
-    //private Label whitePieces = new Label("WhitePieces: ");
-    //private Label rowAHLabel = new Label ("A B C D E F G H");
-    //private Label row18Label = new Label ("1 2 3 4 5 6 7 8");
+    private Button newGameBtn = new Button("New Game");
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        //prepare board
         Group root = new Group();
         VBox board = new Board().createBoard();
-
+        HBox lowBar = new HBox();
+        VBox game = new VBox();
         GridPane grid = new GridPane();
 
-        root.getChildren().add(board);
+
+        game.getChildren().addAll(board, lowBar);
+
+        lowBar.getChildren().add(newGameBtn);
+        newGameBtn.setOnAction((e) -> {PiecesService.setOnStartingPositions(grid);});
+
+        root.getChildren().add(game);
         root.getChildren().add(grid);
 
-        Scene scene = new Scene(root, 413, 483, Color.BLACK);
+        Scene scene = new Scene(root, 400, 483, Color.BLACK);
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("Othello Game");
-
-        //prepare elements
-        for(int column=0; column<10; column++){
-            for(int row=0;row<10;row++){
-                grid.add(PiecesService.createEmpty(), column, row);
-            }
-        }
-
-        //validate if it's working
-        PiecesService.turnPieceBlack(grid, 1, 2);
-        PiecesService.turnPieceWhite(grid, 1, 2);
-
-        PiecesService.turnPieceBlack(grid, 5, 2);
 
         primaryStage.show();
     }
