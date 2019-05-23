@@ -9,24 +9,6 @@ import javafx.scene.layout.GridPane;
 
 public class PiecesService extends Parent {
 
-    static ImageView createWhite(){
-        Image whiteBack = new Image("pieces/white.gif");
-        ImageView white = new ImageView(whiteBack);
-        white.setFitHeight(50);
-        white.setFitWidth(50);
-
-        return white;
-    }
-
-    static ImageView createBlack(){
-        Image blackBack = new Image("pieces/black.gif");
-        ImageView black = new ImageView(blackBack);
-        black.setFitHeight(50);
-        black.setFitWidth(50);
-
-        return black;
-    }
-
     static ImageView createEmpty(){
         Image emptyBack = new Image("pieces/empty.png");
         ImageView transparent = new ImageView(emptyBack);
@@ -37,7 +19,7 @@ public class PiecesService extends Parent {
     }
 
 
-    static void turnPieceBlack(GridPane board, int col, int row){
+    static void turnPieceBlack(GridPane board, double col, double row){
 
         for (Node piece : board.getChildren()) {
             if (GridPane.getColumnIndex(piece) == col && GridPane.getRowIndex(piece) == row) {
@@ -47,7 +29,7 @@ public class PiecesService extends Parent {
         }
     }
 
-    static void turnPieceWhite(GridPane board, int col, int row){
+    static void turnPieceWhite(GridPane board, double col, double row){
 
           for (Node piece : board.getChildren()) {
               if (GridPane.getColumnIndex(piece) == col && GridPane.getRowIndex(piece) == row) {

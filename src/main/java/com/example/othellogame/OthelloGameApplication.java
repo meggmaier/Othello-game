@@ -1,7 +1,9 @@
 package com.example.othellogame;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
@@ -11,50 +13,28 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import javax.swing.*;
+import javax.swing.text.html.ImageView;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import static com.sun.java.accessibility.util.AWTEventMonitor.addMouseListener;
+import static javafx.scene.input.MouseEvent.MOUSE_CLICKED;
+
 
 @SpringBootApplication
-public class OthelloGameApplication extends Application implements MouseListener {
-
+public class OthelloGameApplication extends Application {
 
     private Button newGameBtn = new Button("New Game");
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
+    private Group root = new Group();
+    private VBox board = new Board().createBoard();
+    private HBox lowBar = new HBox();
+    private VBox game = new VBox();
+    private GridPane grid = new GridPane();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
-        Group root = new Group();
-        VBox board = new Board().createBoard();
-        HBox lowBar = new HBox();
-        VBox game = new VBox();
-        GridPane grid = new GridPane();
-
 
         game.getChildren().addAll(board, lowBar);
 
@@ -65,6 +45,18 @@ public class OthelloGameApplication extends Application implements MouseListener
         root.getChildren().add(grid);
 
         Scene scene = new Scene(root, 400, 483, Color.BLACK);
+        scene.setOnMouseClicked((event)-> {
+
+                double mouseXcol = Math.floor(event.getX()/50);
+                double mouseYrow = Math.floor(event.getY()/50);
+
+
+                        PiecesService.turnPieceBlack(grid, mouseXcol, mouseYrow);
+
+
+
+
+        });
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("Othello Game");
