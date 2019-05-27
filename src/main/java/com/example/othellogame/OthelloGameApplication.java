@@ -1,11 +1,11 @@
 package com.example.othellogame;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -13,14 +13,9 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import javax.swing.*;
-import javax.swing.text.html.ImageView;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
-import static com.sun.java.accessibility.util.AWTEventMonitor.addMouseListener;
-import static javafx.scene.input.MouseEvent.MOUSE_CLICKED;
+
 
 
 @SpringBootApplication
@@ -49,11 +44,17 @@ public class OthelloGameApplication extends Application {
 
                 double mouseXcol = Math.floor(event.getX()/50);
                 double mouseYrow = Math.floor(event.getY()/50);
+                ImageView white = PiecesService.createWhite();
+                ImageView black = PiecesService.createBlack();
+
+                grid.getChildren().stream()
+                        .flatMap(n -> )
+
+                            PiecesService.turnPieceBlack(grid, mouseXcol, mouseYrow);
 
 
-                        PiecesService.turnPieceBlack(grid, mouseXcol, mouseYrow);
-
-
+                        }
+                    }
 
 
         });
