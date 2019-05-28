@@ -34,7 +34,15 @@ public class OthelloGameApplication extends Application {
         game.getChildren().addAll(board, lowBar);
 
         lowBar.getChildren().add(newGameBtn);
-        newGameBtn.setOnAction((e) -> {PiecesService.setOnStartingPositions(grid);});
+        newGameBtn.setOnAction((e) -> {
+            int gridsize = grid.getChildren().size();
+            if (gridsize > 0){
+                PiecesService.clearBoard(grid);
+                PiecesService.setOnStartingPositions(grid);
+            } else {
+                PiecesService.setOnStartingPositions(grid);
+            }
+            });
 
         root.getChildren().add(game);
         root.getChildren().add(grid);
@@ -44,17 +52,16 @@ public class OthelloGameApplication extends Application {
 
                 double mouseXcol = Math.floor(event.getX()/50);
                 double mouseYrow = Math.floor(event.getY()/50);
-                ImageView white = PiecesService.createWhite();
-                ImageView black = PiecesService.createBlack();
+                String transparent = "00";
+                String white = "01";
+                String black = "02";
 
-                grid.getChildren().stream()
-                        .flatMap(n -> )
+                for (Node piece : grid.getChildren()) {
+
 
                             PiecesService.turnPieceBlack(grid, mouseXcol, mouseYrow);
-
-
+                            System.out.println(piece.getId());
                         }
-                    }
 
 
         });
@@ -67,6 +74,7 @@ public class OthelloGameApplication extends Application {
 
     public static void main(String[] args) {
         launch(args);
+
 
     }
 }

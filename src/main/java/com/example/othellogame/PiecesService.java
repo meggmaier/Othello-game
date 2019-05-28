@@ -11,19 +11,6 @@ import java.util.Objects;
 
 public class PiecesService extends Parent {
 
-    public ColorState colorState;
-    public double column;
-    public double row;
-
-    public PiecesService(ColorState colorState, double column, double row) {
-        this.colorState = colorState;
-        this.column = column;
-        this.row = row;
-    }
-
-    public ColorState setColorState(ColorState colorState){
-        return colorState;
-    }
 
     static ImageView createEmpty(){
         Image emptyBack = new Image("pieces/empty.png");
@@ -31,24 +18,8 @@ public class PiecesService extends Parent {
         transparent.setFitHeight(50);
         transparent.setFitWidth(50);
 
+
         return transparent;
-    }
-
-    static ImageView createWhite(){
-        Image emptyBack = new Image("pieces/white.gif");
-        ImageView white = new ImageView(emptyBack);
-        white.setFitHeight(50);
-        white.setFitWidth(50);
-
-        return white;
-    }
-    static ImageView createBlack(){
-        Image emptyBack = new Image("pieces/black.gif");
-        ImageView black = new ImageView(emptyBack);
-        black.setFitHeight(50);
-        black.setFitWidth(50);
-
-        return black;
     }
 
 
@@ -58,8 +29,11 @@ public class PiecesService extends Parent {
             if (GridPane.getColumnIndex(piece) == col && GridPane.getRowIndex(piece) == row) {
                 ImageView imageView = (ImageView)piece;
                 imageView.setImage(new Image("pieces/black.gif"));
+                imageView.setId("02");
+
             }
         }
+
     }
 
     static void turnPieceWhite(GridPane board, double col, double row){
@@ -68,8 +42,10 @@ public class PiecesService extends Parent {
             if (GridPane.getColumnIndex(piece) == col && GridPane.getRowIndex(piece) == row) {
                 ImageView imageView = (ImageView)piece;
                 imageView.setImage(new Image("pieces/white.gif"));
+                imageView.setId("01");
             }
         }
+
     }
 
     static void setOnStartingPositions(GridPane grid){
@@ -84,6 +60,11 @@ public class PiecesService extends Parent {
         turnPieceWhite(grid,3,3);
         turnPieceWhite(grid,4,4);
 
+    }
+
+    static void clearBoard(GridPane grid){
+
+        grid.getChildren().remove(0,grid.getChildren().size());
     }
 
 }
