@@ -2,20 +2,14 @@ package com.example.othellogame;
 
 import javafx.application.Application;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-
-
-
 
 
 @SpringBootApplication
@@ -36,34 +30,34 @@ public class OthelloGameApplication extends Application {
         lowBar.getChildren().add(newGameBtn);
         newGameBtn.setOnAction((e) -> {
             int gridsize = grid.getChildren().size();
-            if (gridsize > 0){
+            if (gridsize > 0) {
                 PiecesService.clearBoard(grid);
                 PiecesService.setOnStartingPositions(grid);
             } else {
                 PiecesService.setOnStartingPositions(grid);
             }
-            });
+        });
 
         root.getChildren().add(game);
         root.getChildren().add(grid);
 
         Scene scene = new Scene(root, 400, 483, Color.BLACK);
-        scene.setOnMouseClicked((event)-> {
-                double mouseX = event.getX();
-                double mouseY = event.getY();
-                double columnClicked = Math.floor(mouseX/50);
-                double rowClicked = Math.floor(mouseY/50);
-                //boolean isMoveLegal = PiecesService.isMoveLegal(grid, mouseX, mouseY);
+        scene.setOnMouseClicked((event) -> {
+            double mouseX = event.getX();
+            double mouseY = event.getY();
+            int columnClicked = (int)Math.floor(mouseX / 50);
+            int rowClicked = (int)Math.floor(mouseY / 50);
 
-                for (Node piece : grid.getChildren()) {
-                    //if (isMoveLegal) {
+            boolean isMoveLegal = PiecesService.isMoveLegal(columnClicked, rowClicked, grid);
+            System.out.println("isMoveLegal "+isMoveLegal);
 
-                        PiecesService.turnPieceBlack(grid, columnClicked, rowClicked);
-                        System.out.println(piece.getId());
-                    //}
-                }
+            if(isMoveLegal){
+                PiecesService.turnPieceBlack(grid, columnClicked, rowClicked);
+            }
 
-
+//            for (Node piece : grid.getChildren()) {
+//                System.out.println(piece.getId());
+//            }
         });
 
         primaryStage.setScene(scene);
