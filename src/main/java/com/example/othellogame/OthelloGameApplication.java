@@ -49,19 +49,19 @@ public class OthelloGameApplication extends Application {
 
         Scene scene = new Scene(root, 400, 483, Color.BLACK);
         scene.setOnMouseClicked((event)-> {
-
-                double mouseXcol = Math.floor(event.getX()/50);
-                double mouseYrow = Math.floor(event.getY()/50);
-                String transparent = "00";
-                String white = "01";
-                String black = "02";
+                double mouseX = event.getX();
+                double mouseY = event.getY();
+                double columnClicked = Math.floor(mouseX/50);
+                double rowClicked = Math.floor(mouseY/50);
+                //boolean isMoveLegal = PiecesService.isMoveLegal(grid, mouseX, mouseY);
 
                 for (Node piece : grid.getChildren()) {
+                    //if (isMoveLegal) {
 
-
-                            PiecesService.turnPieceBlack(grid, mouseXcol, mouseYrow);
-                            System.out.println(piece.getId());
-                        }
+                        PiecesService.turnPieceBlack(grid, columnClicked, rowClicked);
+                        System.out.println(piece.getId());
+                    //}
+                }
 
 
         });
