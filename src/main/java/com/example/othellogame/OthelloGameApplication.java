@@ -4,10 +4,12 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -21,11 +23,21 @@ public class OthelloGameApplication extends Application {
     private HBox lowBar = new HBox();
     private VBox game = new VBox();
     private GridPane grid = new GridPane();
+    private long whitesQuantity;
+    private long blacksQuantity;
+    private Label whitesCounter = new Label("Whites: 0");
+    private Label blacksCounter = new Label("Blacks: 0");
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
         game.getChildren().addAll(board, lowBar);
+
+        lowBar.getChildren().add(whitesCounter);
+        whitesCounter.setPrefWidth(150);
+        whitesCounter.setFont(new Font("Arial", 24));
+        whitesCounter.setTextFill(Color.WHITE);
+
 
         lowBar.getChildren().add(newGameBtn);
         newGameBtn.setOnAction((e) -> {
@@ -36,12 +48,24 @@ public class OthelloGameApplication extends Application {
             } else {
                 PiecesService.setOnStartingPositions(grid);
             }
+            blacksQuantity = PiecesService.countBlacks(grid);
+            whitesQuantity = PiecesService.countWhites(grid);
+
+            blacksCounter.setText("Blacks: " + blacksQuantity);
+            whitesCounter.setText("Whites: " + whitesQuantity);
         });
+        newGameBtn.setPrefWidth(100);
+
+        lowBar.getChildren().add(blacksCounter);
+
+        blacksCounter.setPrefWidth(150);
+        blacksCounter.setFont(new Font("Arial", 24));
+        blacksCounter.setTextFill(Color.WHITE);
 
         root.getChildren().add(game);
         root.getChildren().add(grid);
 
-        Scene scene = new Scene(root, 400, 483, Color.BLACK);
+        Scene scene = new Scene(root, 400, 430, Color.BLACK);
         scene.setOnMouseClicked((event) -> {
             double mouseX = event.getX();
             double mouseY = event.getY();
@@ -55,9 +79,11 @@ public class OthelloGameApplication extends Application {
                 PiecesService.turnPieceBlack(grid, columnClicked, rowClicked);
             }
 
-//            for (Node piece : grid.getChildren()) {
-//                System.out.println(piece.getId());
-//            }
+            blacksQuantity = PiecesService.countBlacks(grid);
+            whitesQuantity = PiecesService.countWhites(grid);
+            blacksCounter.setText("Blacks: " + blacksQuantity);
+            whitesCounter.setText("Whites: " + whitesQuantity);
+
         });
 
         primaryStage.setScene(scene);

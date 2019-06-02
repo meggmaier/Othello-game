@@ -1,7 +1,9 @@
 package com.example.othellogame;
 
+import ch.qos.logback.core.pattern.color.BlackCompositeConverter;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -176,6 +178,39 @@ public class PiecesService extends Parent {
             }
 
         return hasBlackAfterWhite;
+    }
+
+    public static long countWhites(GridPane grid){
+
+        List<String> whites = new ArrayList<>();
+
+        for (Node piece : grid.getChildren()){
+            if(piece.getId() != null) {
+                whites.add(piece.getId());
+            }
+        }
+        long whitesQuantity = whites.stream()
+                .filter(id -> id.equals(WHITE_ID))
+                .count();
+
+       return whitesQuantity;
+    }
+
+    public static long countBlacks(GridPane grid){
+
+        List<String> blacks = new ArrayList<>();
+
+        for (Node piece : grid.getChildren()){
+            if(piece.getId() != null) {
+                blacks.add(piece.getId());
+            }
+        }
+
+        long blacksQuantity = blacks.stream()
+                .filter(id -> id.equals(BLACK_ID))
+                .count();
+
+        return blacksQuantity;
     }
 
     }
