@@ -41,8 +41,8 @@ public class OthelloGameApplication extends Application {
 
         lowBar.getChildren().add(newGameBtn);
         newGameBtn.setOnAction((e) -> {
-            int gridsize = grid.getChildren().size();
-            if (gridsize > 0) {
+            int gridSize = grid.getChildren().size();
+            if (gridSize > 0) {
                 PiecesService.clearBoard(grid);
                 PiecesService.setOnStartingPositions(grid);
             } else {

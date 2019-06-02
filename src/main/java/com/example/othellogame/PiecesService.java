@@ -1,16 +1,12 @@
 package com.example.othellogame;
 
-import ch.qos.logback.core.pattern.color.BlackCompositeConverter;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import jdk.nashorn.internal.ir.WhileNode;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class PiecesService extends Parent {
@@ -100,12 +96,12 @@ public class PiecesService extends Parent {
         }
 
 
-        //while(hasAtLeastOneEnemyInRange(col, row, grid)) {
-        //    if (!hasBlackAfterWhite(col, row, grid)) {
-        //        System.out.println("No black piece following");
-        //        return false;
-        //    }
-        //}
+        while(hasAtLeastOneEnemyInRange(col, row, grid)) {
+            if (!hasBlackAfterWhite(col, row, grid)) {
+                System.out.println("No black piece following");
+                return false;
+            }
+        }
         return true;
     }
 
@@ -127,6 +123,8 @@ public class PiecesService extends Parent {
     }
     private static boolean hasBlackAfterWhite(int col, int row, GridPane grid) {
 
+        boolean hasBlackAterWhite = false;
+
         List<String> blackAfterWhiteIds00 = new ArrayList<>();
         List<String> blackAfterWhiteIds45 = new ArrayList<>();
         List<String> blackAfterWhiteIds90 = new ArrayList<>();
@@ -136,50 +134,69 @@ public class PiecesService extends Parent {
         List<String> blackAfterWhiteIds270 = new ArrayList<>();
         List<String> blackAfterWhiteIds315 = new ArrayList<>();
 
-
-        boolean hasBlackAfterWhite = false;
-
         for (int c = 0; c < 8; c++) {
             for (int r = 0; r < 8; r++) {
                 if (c == 0 && r ==0){
                     continue;
                 }
-                blackAfterWhiteIds00 = Arrays.asList(
+                blackAfterWhiteIds00.add(
                         GridHelper.getIdByColumnRowIndex(col, row - r, grid));
-                blackAfterWhiteIds45 = Arrays.asList(
+                blackAfterWhiteIds45.add(
                         GridHelper.getIdByColumnRowIndex(col + c, row - r, grid));
-                blackAfterWhiteIds90 = Arrays.asList(
+                blackAfterWhiteIds90.add(
                         GridHelper.getIdByColumnRowIndex(col + c, row, grid));
-                blackAfterWhiteIds135 = Arrays.asList(
+                blackAfterWhiteIds135.add(
                         GridHelper.getIdByColumnRowIndex(col + c, row + r, grid));
-                blackAfterWhiteIds180 = Arrays.asList(
-                        GridHelper.getIdByColumnRowIndex(col, row + c, grid));
-                blackAfterWhiteIds225 = Arrays.asList(
+                blackAfterWhiteIds180.add(
+                        GridHelper.getIdByColumnRowIndex(col, row + r, grid));
+                blackAfterWhiteIds225.add(
                         GridHelper.getIdByColumnRowIndex(col - c, row + r, grid));
-                blackAfterWhiteIds270 = Arrays.asList(
+                blackAfterWhiteIds270.add(
                         GridHelper.getIdByColumnRowIndex(col - c, row, grid));
-                blackAfterWhiteIds315 = Arrays.asList(
+                blackAfterWhiteIds315.add(
                         GridHelper.getIdByColumnRowIndex(col - c, row - r, grid));
             }
         }
 
-            for (int i=0; i<blackAfterWhiteIds00.size(); i++) {
-                String nextPiece = blackAfterWhiteIds00.get(i+1);
+        if ( blackAfterWhiteIterator(blackAfterWhiteIds00) ||
+        blackAfterWhiteIterator(blackAfterWhiteIds45) ||
+        blackAfterWhiteIterator(blackAfterWhiteIds90) ||
+        blackAfterWhiteIterator(blackAfterWhiteIds135) ||
+        blackAfterWhiteIterator(blackAfterWhiteIds180) ||
+        blackAfterWhiteIterator(blackAfterWhiteIds225) ||
+        blackAfterWhiteIterator(blackAfterWhiteIds270) ||
+        blackAfterWhiteIterator(blackAfterWhiteIds315)){
+            hasBlackAterWhite = true;
+        }
 
-                while (blackAfterWhiteIds00.get(0).equals(WHITE_ID)) {
-                    if(nextPiece != null) {
-                        if(nextPiece.equals(WHITE_ID)) {
-                        continue;
-                    }
-                        hasBlackAfterWhite = nextPiece.equals(BLACK_ID);
-                        break;
-                    }
-                }
-            }
-
-        return hasBlackAfterWhite;
+        return hasBlackAterWhite;
     }
 
+    public static boolean blackAfterWhiteIterator(List<String> idList){
+
+        boolean hasBlackAfterWhite = false;
+
+        for (int i=0; i<idList.size()-1; i++) {
+            String firstPiece = idList.get(0);
+            String nextPiece = idList.get(i+1);
+
+            if(firstPiece == null){
+                    break;
+            }
+            if (firstPiece.equals(WHITE_ID)) {
+                if(nextPiece == null) {
+                    break;
+                }
+                if(nextPiece.equals(WHITE_ID)) {
+                    continue;
+                }
+                if(nextPiece.equals(BLACK_ID))
+                    hasBlackAfterWhite = true;
+                break;
+            }
+        }
+        return hasBlackAfterWhite;
+    }
     public static long countWhites(GridPane grid){
 
         List<String> whites = new ArrayList<>();
@@ -189,11 +206,9 @@ public class PiecesService extends Parent {
                 whites.add(piece.getId());
             }
         }
-        long whitesQuantity = whites.stream()
+        return whites.stream()
                 .filter(id -> id.equals(WHITE_ID))
                 .count();
-
-       return whitesQuantity;
     }
 
     public static long countBlacks(GridPane grid){
@@ -205,12 +220,11 @@ public class PiecesService extends Parent {
                 blacks.add(piece.getId());
             }
         }
-
-        long blacksQuantity = blacks.stream()
+        return blacks.stream()
                 .filter(id -> id.equals(BLACK_ID))
                 .count();
-
-        return blacksQuantity;
     }
+
+
 
     }
