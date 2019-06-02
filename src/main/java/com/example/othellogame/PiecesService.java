@@ -5,9 +5,10 @@ import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import jdk.nashorn.internal.ir.WhileNode;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class PiecesService extends Parent {
@@ -73,6 +74,7 @@ public class PiecesService extends Parent {
 
     static boolean isMoveLegal(int col, int row, GridPane grid) {
 
+
         if (col < 0 || col > 7) {
             System.out.println("Out of board");
             return false;
@@ -83,7 +85,7 @@ public class PiecesService extends Parent {
             return false;
         }
 
-        String id = GridHelper.getIdByRowColumnIndex(col, row, grid);
+        String id = GridHelper.getIdByColumnRowIndex(col, row, grid);
 
         if (id != null) {
             System.out.println("Already taken");
@@ -91,55 +93,89 @@ public class PiecesService extends Parent {
         }
 
         if (!hasAtLeastOneEnemyInRange(col, row, grid)) {
-            System.out.println("No neigthbord as an enemy");
+            System.out.println("No neighbor as an enemy");
             return false;
         }
 
 
-        System.out.println();
-//        boolean isLegal = false;
-//
-//        ObservableList<Node> pieces = grid.getChildren();
-//
-//        Point2D mousePoint = new Point2D(mouseX, mouseY);
-//
-//        for(Node piece : pieces){
-//            boolean isEmpty = piece.getId().equals(emptyID);
-//            boolean isWhite = piece.getId().equals(WHITE_ID);
-//            boolean isBlack = piece.getId().equals(BLACK_ID);
-//
-//                //checking if slot is empty
-//            if(piece.contains(mousePoint) && isEmpty) {
-//                    continue;
-//            }
-        //checking if slot is next to at least 1 white piece (all directories); if yes continue
-        //if(){
-        //    continue;
-        ///}
-        //checking if there is black piece right after white piece(s); if yes - move is legal
-        //if(){
-        //        isLegal = true;
+        //while(hasAtLeastOneEnemyInRange(col, row, grid)) {
+        //    if (!hasBlackAfterWhite(col, row, grid)) {
+        //        System.out.println("No black piece following");
+        //        return false;
+        //    }
         //}
-
-
         return true;
     }
 
     private static boolean hasAtLeastOneEnemyInRange(int col, int row, GridPane grid) {
-        List<String> neighbordsIds = Arrays.asList(
-                GridHelper.getIdByRowColumnIndex(col, row - 1, grid),
-                GridHelper.getIdByRowColumnIndex(col + 1, row - 1, grid),
-                GridHelper.getIdByRowColumnIndex(col + 1, row, grid),
-                GridHelper.getIdByRowColumnIndex(col + 1, row + 1, grid),
-                GridHelper.getIdByRowColumnIndex(col + 1, row, grid),
-                GridHelper.getIdByRowColumnIndex(col - 1, row + 1, grid),
-                GridHelper.getIdByRowColumnIndex(col - 1, row, grid),
-                GridHelper.getIdByRowColumnIndex(col - 1, row - 1, grid)
+        List<String> neighborsIds = Arrays.asList(
+                GridHelper.getIdByColumnRowIndex(col, row - 1, grid),
+                GridHelper.getIdByColumnRowIndex(col + 1, row - 1, grid),
+                GridHelper.getIdByColumnRowIndex(col + 1, row, grid),
+                GridHelper.getIdByColumnRowIndex(col + 1, row + 1, grid),
+                GridHelper.getIdByColumnRowIndex(col, row + 1, grid),
+                GridHelper.getIdByColumnRowIndex(col - 1, row + 1, grid),
+                GridHelper.getIdByColumnRowIndex(col - 1, row, grid),
+                GridHelper.getIdByColumnRowIndex(col - 1, row - 1, grid)
         );
 
-        return neighbordsIds.stream()
+        return neighborsIds.stream()
                 .filter(id -> id != null)
                 .anyMatch(id -> id.equals(WHITE_ID));
     }
+    private static boolean hasBlackAfterWhite(int col, int row, GridPane grid) {
 
-}
+        List<String> blackAfterWhiteIds00 = new ArrayList<>();
+        List<String> blackAfterWhiteIds45 = new ArrayList<>();
+        List<String> blackAfterWhiteIds90 = new ArrayList<>();
+        List<String> blackAfterWhiteIds135 = new ArrayList<>();
+        List<String> blackAfterWhiteIds180 = new ArrayList<>();
+        List<String> blackAfterWhiteIds225 = new ArrayList<>();
+        List<String> blackAfterWhiteIds270 = new ArrayList<>();
+        List<String> blackAfterWhiteIds315 = new ArrayList<>();
+
+
+        boolean hasBlackAfterWhite = false;
+
+        for (int c = 0; c < 8; c++) {
+            for (int r = 0; r < 8; r++) {
+                if (c == 0 && r ==0){
+                    continue;
+                }
+                blackAfterWhiteIds00 = Arrays.asList(
+                        GridHelper.getIdByColumnRowIndex(col, row - r, grid));
+                blackAfterWhiteIds45 = Arrays.asList(
+                        GridHelper.getIdByColumnRowIndex(col + c, row - r, grid));
+                blackAfterWhiteIds90 = Arrays.asList(
+                        GridHelper.getIdByColumnRowIndex(col + c, row, grid));
+                blackAfterWhiteIds135 = Arrays.asList(
+                        GridHelper.getIdByColumnRowIndex(col + c, row + r, grid));
+                blackAfterWhiteIds180 = Arrays.asList(
+                        GridHelper.getIdByColumnRowIndex(col, row + c, grid));
+                blackAfterWhiteIds225 = Arrays.asList(
+                        GridHelper.getIdByColumnRowIndex(col - c, row + r, grid));
+                blackAfterWhiteIds270 = Arrays.asList(
+                        GridHelper.getIdByColumnRowIndex(col - c, row, grid));
+                blackAfterWhiteIds315 = Arrays.asList(
+                        GridHelper.getIdByColumnRowIndex(col - c, row - r, grid));
+            }
+        }
+
+            for (int i=0; i<blackAfterWhiteIds00.size(); i++) {
+                String nextPiece = blackAfterWhiteIds00.get(i+1);
+
+                while (blackAfterWhiteIds00.get(0).equals(WHITE_ID)) {
+                    if(nextPiece != null) {
+                        if(nextPiece.equals(WHITE_ID)) {
+                        continue;
+                    }
+                        hasBlackAfterWhite = nextPiece.equals(BLACK_ID);
+                        break;
+                    }
+                }
+            }
+
+        return hasBlackAfterWhite;
+    }
+
+    }
