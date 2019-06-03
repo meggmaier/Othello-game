@@ -95,13 +95,60 @@ public class PiecesService extends Parent {
             return false;
         }
 
+        List<String> blackAfterWhiteIds00 = new ArrayList<>();
+        List<String> blackAfterWhiteIds45 = new ArrayList<>();
+        List<String> blackAfterWhiteIds90 = new ArrayList<>();
+        List<String> blackAfterWhiteIds135 = new ArrayList<>();
+        List<String> blackAfterWhiteIds180 = new ArrayList<>();
+        List<String> blackAfterWhiteIds225 = new ArrayList<>();
+        List<String> blackAfterWhiteIds270 = new ArrayList<>();
+        List<String> blackAfterWhiteIds315 = new ArrayList<>();
 
-        while(hasAtLeastOneEnemyInRange(col, row, grid)) {
-            if (!hasBlackAfterWhite(col, row, grid)) {
+        for (int i = 0; i < 8; i++) {
+                if (i == 0){
+                    continue;
+                }
+                blackAfterWhiteIds00.add(
+                        GridHelper.getIdByColumnRowIndex(col, row - i, grid));
+                blackAfterWhiteIds45.add(
+                        GridHelper.getIdByColumnRowIndex(col + i, row - i, grid));
+                blackAfterWhiteIds90.add(
+                        GridHelper.getIdByColumnRowIndex(col + i, row, grid));
+                blackAfterWhiteIds135.add(
+                        GridHelper.getIdByColumnRowIndex(col + i, row + i, grid));
+                blackAfterWhiteIds180.add(
+                        GridHelper.getIdByColumnRowIndex(col, row + i, grid));
+                blackAfterWhiteIds225.add(
+                        GridHelper.getIdByColumnRowIndex(col - i, row + i, grid));
+                blackAfterWhiteIds270.add(
+                        GridHelper.getIdByColumnRowIndex(col - i, row, grid));
+                blackAfterWhiteIds315.add(
+                        GridHelper.getIdByColumnRowIndex(col - i, row - i, grid));
+            }
+
+
+            if (!hasBlackAfterWhite(blackAfterWhiteIds00)
+            || !hasBlackAfterWhite(blackAfterWhiteIds45)
+            || !hasBlackAfterWhite(blackAfterWhiteIds90)
+            || !hasBlackAfterWhite(blackAfterWhiteIds135)
+            || !hasBlackAfterWhite(blackAfterWhiteIds180)
+            || !hasBlackAfterWhite(blackAfterWhiteIds225)
+            || !hasBlackAfterWhite(blackAfterWhiteIds270)
+            || !hasBlackAfterWhite(blackAfterWhiteIds315)
+            ) {
+                System.out.println("00: " + blackAfterWhiteIds00);
+                System.out.println("45: " + blackAfterWhiteIds45);
+                System.out.println("90: " + blackAfterWhiteIds90);
+                System.out.println("135: " + blackAfterWhiteIds135);
+                System.out.println("180: " + blackAfterWhiteIds180);
+                System.out.println("225: " + blackAfterWhiteIds225);
+                System.out.println("270: " + blackAfterWhiteIds270);
+                System.out.println("315: " + blackAfterWhiteIds315);
+
                 System.out.println("No black piece following");
                 return false;
             }
-        }
+
         return true;
     }
 
@@ -121,82 +168,34 @@ public class PiecesService extends Parent {
                 .filter(id -> id != null)
                 .anyMatch(id -> id.equals(WHITE_ID));
     }
-    private static boolean hasBlackAfterWhite(int col, int row, GridPane grid) {
 
-        boolean hasBlackAterWhite = false;
 
-        List<String> blackAfterWhiteIds00 = new ArrayList<>();
-        List<String> blackAfterWhiteIds45 = new ArrayList<>();
-        List<String> blackAfterWhiteIds90 = new ArrayList<>();
-        List<String> blackAfterWhiteIds135 = new ArrayList<>();
-        List<String> blackAfterWhiteIds180 = new ArrayList<>();
-        List<String> blackAfterWhiteIds225 = new ArrayList<>();
-        List<String> blackAfterWhiteIds270 = new ArrayList<>();
-        List<String> blackAfterWhiteIds315 = new ArrayList<>();
+    private static boolean hasBlackAfterWhite(List<String> idList){
 
-        for (int c = 0; c < 8; c++) {
-            for (int r = 0; r < 8; r++) {
-                if (c == 0 && r ==0){
-                    continue;
-                }
-                blackAfterWhiteIds00.add(
-                        GridHelper.getIdByColumnRowIndex(col, row - r, grid));
-                blackAfterWhiteIds45.add(
-                        GridHelper.getIdByColumnRowIndex(col + c, row - r, grid));
-                blackAfterWhiteIds90.add(
-                        GridHelper.getIdByColumnRowIndex(col + c, row, grid));
-                blackAfterWhiteIds135.add(
-                        GridHelper.getIdByColumnRowIndex(col + c, row + r, grid));
-                blackAfterWhiteIds180.add(
-                        GridHelper.getIdByColumnRowIndex(col, row + r, grid));
-                blackAfterWhiteIds225.add(
-                        GridHelper.getIdByColumnRowIndex(col - c, row + r, grid));
-                blackAfterWhiteIds270.add(
-                        GridHelper.getIdByColumnRowIndex(col - c, row, grid));
-                blackAfterWhiteIds315.add(
-                        GridHelper.getIdByColumnRowIndex(col - c, row - r, grid));
-            }
-        }
-
-        if ( blackAfterWhiteIterator(blackAfterWhiteIds00) ||
-        blackAfterWhiteIterator(blackAfterWhiteIds45) ||
-        blackAfterWhiteIterator(blackAfterWhiteIds90) ||
-        blackAfterWhiteIterator(blackAfterWhiteIds135) ||
-        blackAfterWhiteIterator(blackAfterWhiteIds180) ||
-        blackAfterWhiteIterator(blackAfterWhiteIds225) ||
-        blackAfterWhiteIterator(blackAfterWhiteIds270) ||
-        blackAfterWhiteIterator(blackAfterWhiteIds315)){
-            hasBlackAterWhite = true;
-        }
-
-        return hasBlackAterWhite;
-    }
-
-    public static boolean blackAfterWhiteIterator(List<String> idList){
-
-        boolean hasBlackAfterWhite = false;
-
-        for (int i=0; i<idList.size()-1; i++) {
+            boolean hasBlack = false;
             String firstPiece = idList.get(0);
-            String nextPiece = idList.get(i+1);
 
-            if(firstPiece == null){
-                    break;
-            }
-            if (firstPiece.equals(WHITE_ID)) {
-                if(nextPiece == null) {
-                    break;
+
+            while (firstPiece != null && firstPiece.equals(WHITE_ID)) {
+
+                    int i = 0;
+                    String nextPiece = idList.get(i + 1);
+
+                    if (nextPiece == null) {
+                        hasBlack = false;
+                        break;
+                    }
+                    if (nextPiece.equals(BLACK_ID)) {
+                        hasBlack = true;
+                        break;
+                    }
+                    if (nextPiece.equals(WHITE_ID)){
+                        i++;
                 }
-                if(nextPiece.equals(WHITE_ID)) {
-                    continue;
-                }
-                if(nextPiece.equals(BLACK_ID))
-                    hasBlackAfterWhite = true;
-                break;
             }
-        }
-        return hasBlackAfterWhite;
+            return hasBlack;
     }
+
     public static long countWhites(GridPane grid){
 
         List<String> whites = new ArrayList<>();

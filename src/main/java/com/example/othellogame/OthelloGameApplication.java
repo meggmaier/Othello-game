@@ -94,7 +94,5 @@ public class OthelloGameApplication extends Application {
 
     public static void main(String[] args) {
         launch(args);
-
-
     }
 }
