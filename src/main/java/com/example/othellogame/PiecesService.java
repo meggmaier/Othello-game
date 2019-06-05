@@ -83,7 +83,7 @@ public class PiecesService extends Parent {
             return false;
         }
 
-        String id = GridHelper.getIdByColumnRowIndex(col, row, grid);
+        String id = GridHelper.getIdByColumnRowIndex(col, row, grid).getId();
 
         if (id != null) {
             System.out.println("Already taken");
@@ -95,14 +95,14 @@ public class PiecesService extends Parent {
             return false;
         }
 
-        List<String> blackAfterWhiteIds00 = new ArrayList<>();
-        List<String> blackAfterWhiteIds45 = new ArrayList<>();
-        List<String> blackAfterWhiteIds90 = new ArrayList<>();
-        List<String> blackAfterWhiteIds135 = new ArrayList<>();
-        List<String> blackAfterWhiteIds180 = new ArrayList<>();
-        List<String> blackAfterWhiteIds225 = new ArrayList<>();
-        List<String> blackAfterWhiteIds270 = new ArrayList<>();
-        List<String> blackAfterWhiteIds315 = new ArrayList<>();
+        List<Node> blackAfterWhiteIds00 = new ArrayList<>();
+        List<Node> blackAfterWhiteIds45 = new ArrayList<>();
+        List<Node> blackAfterWhiteIds90 = new ArrayList<>();
+        List<Node> blackAfterWhiteIds135 = new ArrayList<>();
+        List<Node> blackAfterWhiteIds180 = new ArrayList<>();
+        List<Node> blackAfterWhiteIds225 = new ArrayList<>();
+        List<Node> blackAfterWhiteIds270 = new ArrayList<>();
+        List<Node> blackAfterWhiteIds315 = new ArrayList<>();
 
         for (int i = 0; i < 8; i++) {
                 if (i == 0){
@@ -136,7 +136,7 @@ public class PiecesService extends Parent {
             || !hasBlackAfterWhite(blackAfterWhiteIds270)
             || !hasBlackAfterWhite(blackAfterWhiteIds315)
             ) {
-                System.out.println("00: " + blackAfterWhiteIds00);
+                System.out.println("00: " + blackAfterWhiteIds00); //printing pieces at given directories
                 System.out.println("45: " + blackAfterWhiteIds45);
                 System.out.println("90: " + blackAfterWhiteIds90);
                 System.out.println("135: " + blackAfterWhiteIds135);
@@ -154,14 +154,14 @@ public class PiecesService extends Parent {
 
     private static boolean hasAtLeastOneEnemyInRange(int col, int row, GridPane grid) {
         List<String> neighborsIds = Arrays.asList(
-                GridHelper.getIdByColumnRowIndex(col, row - 1, grid),
-                GridHelper.getIdByColumnRowIndex(col + 1, row - 1, grid),
-                GridHelper.getIdByColumnRowIndex(col + 1, row, grid),
-                GridHelper.getIdByColumnRowIndex(col + 1, row + 1, grid),
-                GridHelper.getIdByColumnRowIndex(col, row + 1, grid),
-                GridHelper.getIdByColumnRowIndex(col - 1, row + 1, grid),
-                GridHelper.getIdByColumnRowIndex(col - 1, row, grid),
-                GridHelper.getIdByColumnRowIndex(col - 1, row - 1, grid)
+                GridHelper.getIdByColumnRowIndex(col, row - 1, grid).getId(),
+                GridHelper.getIdByColumnRowIndex(col + 1, row - 1, grid).getId(),
+                GridHelper.getIdByColumnRowIndex(col + 1, row, grid).getId(),
+                GridHelper.getIdByColumnRowIndex(col + 1, row + 1, grid).getId(),
+                GridHelper.getIdByColumnRowIndex(col, row + 1, grid).getId(),
+                GridHelper.getIdByColumnRowIndex(col - 1, row + 1, grid).getId(),
+                GridHelper.getIdByColumnRowIndex(col - 1, row, grid).getId(),
+                GridHelper.getIdByColumnRowIndex(col - 1, row - 1, grid).getId()
         );
 
         return neighborsIds.stream()
@@ -170,28 +170,30 @@ public class PiecesService extends Parent {
     }
 
 
-    private static boolean hasBlackAfterWhite(List<String> idList){
+    private static boolean hasBlackAfterWhite(List<Node> idList){
 
             boolean hasBlack = false;
-            String firstPiece = idList.get(0);
+            String firstPiece = idList.get(0).getId();
 
 
             while (firstPiece != null && firstPiece.equals(WHITE_ID)) {
 
                     int i = 0;
-                    String nextPiece = idList.get(i + 1);
+                    String nextPiece = idList.get(i + 1).getId();
 
                     if (nextPiece == null) {
                         hasBlack = false;
                         break;
                     }
+                    if (nextPiece.equals(WHITE_ID)){
+                        i++;
+                        continue;
+                    }
                     if (nextPiece.equals(BLACK_ID)) {
                         hasBlack = true;
                         break;
                     }
-                    if (nextPiece.equals(WHITE_ID)){
-                        i++;
-                }
+
             }
             return hasBlack;
     }

@@ -6,7 +6,7 @@ import javafx.scene.layout.GridPane;
 
 public class GridHelper {
 
-    public static String getIdByColumnRowIndex(int column, int row, GridPane gridPane) {
+    public static Node getIdByColumnRowIndex(int column, int row, GridPane gridPane) {
         Node result = null;
         ObservableList<Node> childrens = gridPane.getChildren();
 
@@ -17,10 +17,7 @@ public class GridHelper {
             }
         }
 
-        if(result == null){
-            return null;
-        }
-        return result.getId();
+        return result;
     }
 
 }
