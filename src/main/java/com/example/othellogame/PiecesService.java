@@ -14,7 +14,6 @@ public class PiecesService extends Parent {
     private static final String WHITE_ID = "01";
     private static final String BLACK_ID = "02";
 
-
     static ImageView createEmpty() {
         Image emptyBack = new Image("pieces/empty.png");
         ImageView transparent = new ImageView(emptyBack);
@@ -95,73 +94,25 @@ public class PiecesService extends Parent {
             return false;
         }
 
-        List<Node> blackAfterWhiteIds00 = new ArrayList<>();
-        List<Node> blackAfterWhiteIds45 = new ArrayList<>();
-        List<Node> blackAfterWhiteIds90 = new ArrayList<>();
-        List<Node> blackAfterWhiteIds135 = new ArrayList<>();
-        List<Node> blackAfterWhiteIds180 = new ArrayList<>();
-        List<Node> blackAfterWhiteIds225 = new ArrayList<>();
-        List<Node> blackAfterWhiteIds270 = new ArrayList<>();
-        List<Node> blackAfterWhiteIds315 = new ArrayList<>();
 
-        for (int i = 0; i < 8; i++) {
-                if (i == 0){
-                    continue;
-                }
-                blackAfterWhiteIds00.add(
-                        GridHelper.getIdByColumnRowIndex(col, row - i, grid));
-                blackAfterWhiteIds45.add(
-                        GridHelper.getIdByColumnRowIndex(col + i, row - i, grid));
-                blackAfterWhiteIds90.add(
-                        GridHelper.getIdByColumnRowIndex(col + i, row, grid));
-                blackAfterWhiteIds135.add(
-                        GridHelper.getIdByColumnRowIndex(col + i, row + i, grid));
-                blackAfterWhiteIds180.add(
-                        GridHelper.getIdByColumnRowIndex(col, row + i, grid));
-                blackAfterWhiteIds225.add(
-                        GridHelper.getIdByColumnRowIndex(col - i, row + i, grid));
-                blackAfterWhiteIds270.add(
-                        GridHelper.getIdByColumnRowIndex(col - i, row, grid));
-                blackAfterWhiteIds315.add(
-                        GridHelper.getIdByColumnRowIndex(col - i, row - i, grid));
-            }
-
-
-            if (!hasBlackAfterWhite(blackAfterWhiteIds00)
-            || !hasBlackAfterWhite(blackAfterWhiteIds45)
-            || !hasBlackAfterWhite(blackAfterWhiteIds90)
-            || !hasBlackAfterWhite(blackAfterWhiteIds135)
-            || !hasBlackAfterWhite(blackAfterWhiteIds180)
-            || !hasBlackAfterWhite(blackAfterWhiteIds225)
-            || !hasBlackAfterWhite(blackAfterWhiteIds270)
-            || !hasBlackAfterWhite(blackAfterWhiteIds315)
-            ) {
-                System.out.println("00: " + blackAfterWhiteIds00); //printing pieces at given directories
-                System.out.println("45: " + blackAfterWhiteIds45);
-                System.out.println("90: " + blackAfterWhiteIds90);
-                System.out.println("135: " + blackAfterWhiteIds135);
-                System.out.println("180: " + blackAfterWhiteIds180);
-                System.out.println("225: " + blackAfterWhiteIds225);
-                System.out.println("270: " + blackAfterWhiteIds270);
-                System.out.println("315: " + blackAfterWhiteIds315);
-
-                System.out.println("No black piece following");
-                return false;
-            }
+        if (hasAtLeastOneEnemyInRange(col, row, grid)) {
+            return getBlackAfterWhiteListBoolean(col, row, grid).stream()
+                    .anyMatch(hasBlack -> hasBlack.equals(true));
+        }
 
         return true;
     }
 
     private static boolean hasAtLeastOneEnemyInRange(int col, int row, GridPane grid) {
         List<String> neighborsIds = Arrays.asList(
-                GridHelper.getIdByColumnRowIndex(col, row - 1, grid).getId(),
-                GridHelper.getIdByColumnRowIndex(col + 1, row - 1, grid).getId(),
-                GridHelper.getIdByColumnRowIndex(col + 1, row, grid).getId(),
-                GridHelper.getIdByColumnRowIndex(col + 1, row + 1, grid).getId(),
-                GridHelper.getIdByColumnRowIndex(col, row + 1, grid).getId(),
-                GridHelper.getIdByColumnRowIndex(col - 1, row + 1, grid).getId(),
-                GridHelper.getIdByColumnRowIndex(col - 1, row, grid).getId(),
-                GridHelper.getIdByColumnRowIndex(col - 1, row - 1, grid).getId()
+                GridHelper.getNeighbors00(col,row, grid).get(0).getId(),
+                GridHelper.getNeighbors45(col,row, grid).get(0).getId(),
+                GridHelper.getNeighbors90(col,row, grid).get(0).getId(),
+                GridHelper.getNeighbors135(col,row, grid).get(0).getId(),
+                GridHelper.getNeighbors180(col,row, grid).get(0).getId(),
+                GridHelper.getNeighbors225(col,row, grid).get(0).getId(),
+                GridHelper.getNeighbors270(col,row, grid).get(0).getId(),
+                GridHelper.getNeighbors315(col,row, grid).get(0).getId()
         );
 
         return neighborsIds.stream()
@@ -170,32 +121,81 @@ public class PiecesService extends Parent {
     }
 
 
-    private static boolean hasBlackAfterWhite(List<Node> idList){
+    public static boolean hasBlackAfterWhite(List<Node> idList){
 
             boolean hasBlack = false;
             String firstPiece = idList.get(0).getId();
 
 
-            while (firstPiece != null && firstPiece.equals(WHITE_ID)) {
+            loop: while (firstPiece != null && firstPiece.equals(WHITE_ID)) {
 
-                    int i = 0;
+                for (int i = 0; i < idList.size() - 1; i++) {
                     String nextPiece = idList.get(i + 1).getId();
 
                     if (nextPiece == null) {
-                        hasBlack = false;
-                        break;
-                    }
-                    if (nextPiece.equals(WHITE_ID)){
-                        i++;
-                        continue;
-                    }
-                    if (nextPiece.equals(BLACK_ID)) {
-                        hasBlack = true;
-                        break;
+                        return hasBlack;
                     }
 
-            }
+                    if (nextPiece.equals(BLACK_ID)) {
+                        hasBlack = true;
+                        break loop;
+                        }
+                    }
+                }
+
             return hasBlack;
+    }
+
+    public static List<Boolean> getBlackAfterWhiteListBoolean(int col, int row, GridPane grid){
+        List<Boolean> hasBlackAfterWhiteList = Arrays.asList(
+                hasBlackAfterWhite(GridHelper.getNeighbors00(col, row, grid)),
+                hasBlackAfterWhite(GridHelper.getNeighbors45(col, row, grid)),
+                hasBlackAfterWhite(GridHelper.getNeighbors90(col, row, grid)),
+                hasBlackAfterWhite(GridHelper.getNeighbors135(col, row, grid)),
+                hasBlackAfterWhite(GridHelper.getNeighbors180(col, row, grid)),
+                hasBlackAfterWhite(GridHelper.getNeighbors225(col, row, grid)),
+                hasBlackAfterWhite(GridHelper.getNeighbors270(col, row, grid)),
+                hasBlackAfterWhite(GridHelper.getNeighbors315(col, row, grid))
+        );
+
+        return hasBlackAfterWhiteList;
+    }
+
+    public static void flipToBlack (List<Node> nodeList, GridPane grid){
+        List<Node> whitePieces = new ArrayList<>();
+
+        while (hasBlackAfterWhite(nodeList)) {
+            for (Node node : nodeList) {
+                String nodeId = node.getId();
+
+                if (nodeId == null){
+                    System.out.println("null");
+                }
+                if (nodeId != null && nodeId.equals(WHITE_ID)) {
+                    whitePieces.add(node);
+                }
+            }
+        }
+        for (Node white : whitePieces){
+            turnPieceBlack(grid, GridPane.getColumnIndex(white), GridPane.getRowIndex(white));
+        }
+    }
+
+    public static void flipToWhite (List<Node> nodeList, GridPane grid){
+
+        List<Node> blackPieces = new ArrayList<>();
+
+        for (Node node : nodeList){
+            String nodeId = node.getId();
+
+            if(nodeId.equals(WHITE_ID)){
+                blackPieces.add(node);
+            }
+        }
+
+        for (Node white : blackPieces){
+            turnPieceBlack(grid, GridPane.getColumnIndex(white), GridPane.getRowIndex(white));
+        }
     }
 
     public static long countWhites(GridPane grid){
