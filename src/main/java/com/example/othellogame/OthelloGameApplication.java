@@ -80,14 +80,14 @@ public class OthelloGameApplication extends Application {
 
             if(isMoveLegal){
                 PiecesService.turnPieceBlack(grid, columnClicked, rowClicked);
-                PiecesService.flipToBlack(GridHelper.getNeighbors00(columnClicked,rowClicked,grid), grid);
-                PiecesService.flipToBlack(GridHelper.getNeighbors45(columnClicked,rowClicked,grid), grid);
-                PiecesService.flipToBlack(GridHelper.getNeighbors90(columnClicked,rowClicked,grid), grid);
-                PiecesService.flipToBlack(GridHelper.getNeighbors135(columnClicked,rowClicked,grid), grid);
-                PiecesService.flipToBlack(GridHelper.getNeighbors180(columnClicked,rowClicked,grid), grid);
-                PiecesService.flipToBlack(GridHelper.getNeighbors225(columnClicked,rowClicked,grid), grid);
-                PiecesService.flipToBlack(GridHelper.getNeighbors270(columnClicked,rowClicked,grid), grid);
-                PiecesService.flipToBlack(GridHelper.getNeighbors315(columnClicked,rowClicked,grid), grid);
+                PiecesService.flipToBlack(GridHelper.getNeighbors00(columnClicked, rowClicked, grid), grid);
+                PiecesService.flipToBlack(GridHelper.getNeighbors45(columnClicked, rowClicked, grid), grid);
+                PiecesService.flipToBlack(GridHelper.getNeighbors90(columnClicked, rowClicked, grid), grid);
+                PiecesService.flipToBlack(GridHelper.getNeighbors135(columnClicked, rowClicked, grid), grid);
+                PiecesService.flipToBlack(GridHelper.getNeighbors180(columnClicked, rowClicked, grid), grid);
+                PiecesService.flipToBlack(GridHelper.getNeighbors225(columnClicked, rowClicked, grid), grid);
+                PiecesService.flipToBlack(GridHelper.getNeighbors270(columnClicked, rowClicked, grid), grid);
+                PiecesService.flipToBlack(GridHelper.getNeighbors315(columnClicked, rowClicked, grid), grid);
 
             }
 
