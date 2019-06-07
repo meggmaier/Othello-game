@@ -6,6 +6,7 @@ import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GridHelper {
 
@@ -19,7 +20,9 @@ public class GridHelper {
             neighbors00.add(
                     getIdByColumnRowIndex(col, row - i, grid));
         }
-
+        neighbors00 = neighbors00.stream()
+                .filter(e -> e != null)
+                .collect(Collectors.toList());
         return neighbors00;
     }
 
@@ -33,7 +36,11 @@ public class GridHelper {
             neighbors45.add(
                     getIdByColumnRowIndex(col + i, row - i, grid));
         }
-            return neighbors45;
+
+        neighbors45 = neighbors45.stream()
+                .filter(e -> e != null)
+                .collect(Collectors.toList());
+        return neighbors45;
     }
 
     public static List<Node> getNeighbors90(int col, int row, GridPane grid) {
@@ -45,7 +52,11 @@ public class GridHelper {
             neighbors90.add(
                     getIdByColumnRowIndex(col + i, row, grid));
         }
-                return neighbors90;
+
+        neighbors90 = neighbors90.stream()
+                .filter(e -> e != null)
+                .collect(Collectors.toList());
+        return neighbors90;
     }
 
     public static List<Node> getNeighbors135(int col, int row, GridPane grid) {
@@ -58,6 +69,10 @@ public class GridHelper {
             neighbors135.add(
                     getIdByColumnRowIndex(col + i, row + i, grid));
         }
+
+        neighbors135 = neighbors135.stream()
+                .filter(e->e!=null)
+                .collect(Collectors.toList());
         return neighbors135;
     }
 
@@ -71,6 +86,10 @@ public class GridHelper {
             neighbors180.add(
                     getIdByColumnRowIndex(col, row + i, grid));
         }
+
+        neighbors180 = neighbors180.stream()
+                .filter(e->e!=null)
+                .collect(Collectors.toList());
         return neighbors180;
     }
 
@@ -84,6 +103,11 @@ public class GridHelper {
             neighbors225.add(
                     getIdByColumnRowIndex(col - i, row + i, grid));
         }
+
+        neighbors225 = neighbors225.stream()
+                .filter(e->e!=null)
+                .collect(Collectors.toList());
+
         return neighbors225;
     }
 
@@ -97,6 +121,10 @@ public class GridHelper {
             neighbors270.add(
                     getIdByColumnRowIndex(col - i, row, grid));
         }
+
+        neighbors270 = neighbors270.stream()
+                .filter(e->e!=null)
+                .collect(Collectors.toList());
         return neighbors270;
     }
 
@@ -110,6 +138,10 @@ public class GridHelper {
             neighbors315.add(
                     getIdByColumnRowIndex(col - i, row - i, grid));
         }
+
+        neighbors315 = neighbors315.stream()
+                .filter(e->e!=null)
+                .collect(Collectors.toList());
         return neighbors315;
     }
 
@@ -118,7 +150,7 @@ public class GridHelper {
         ObservableList<Node> children = gridPane.getChildren();
 
         for (Node node : children) {
-            if(GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == column) {
+            if (GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == column) {
                 result = node;
                 break;
             }
