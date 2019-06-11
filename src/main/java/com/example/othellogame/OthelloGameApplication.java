@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @SpringBootApplication
@@ -30,6 +31,7 @@ public class OthelloGameApplication extends Application {
     private long blacksQuantity;
     private Label whitesCounter = new Label("Whites: 0");
     private Label blacksCounter = new Label("Blacks: 0");
+    private static boolean turn = false;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -52,7 +54,7 @@ public class OthelloGameApplication extends Application {
                 PiecesService.setOnStartingPositions(grid);
             }
             blacksQuantity = PiecesService.countBlacks(grid);
-            whitesQuantity = PiecesService.countWhites(grid);
+            whitesQuantity = WhitePiecesService.countWhites(grid);
 
             blacksCounter.setText("Blacks: " + blacksQuantity);
             whitesCounter.setText("Whites: " + whitesQuantity);
@@ -75,26 +77,47 @@ public class OthelloGameApplication extends Application {
             int columnClicked = (int)Math.floor(mouseX / 50);
             int rowClicked = (int)Math.floor(mouseY / 50);
 
-            boolean isMoveLegal = PiecesService.isMoveLegal(columnClicked, rowClicked, grid);
-            System.out.println("isMoveLegal "+isMoveLegal);
+            boolean isMoveLegalBlack = PiecesService.isMoveLegal(columnClicked, rowClicked, grid);
+            Node randomComputerMove = WhitePiecesService.calculateComputerMove(grid);
 
-            if(isMoveLegal){
-                PiecesService.turnPieceBlack(grid, columnClicked, rowClicked);
-                PiecesService.flipToBlack(GridHelper.getNeighbors00(columnClicked, rowClicked, grid), grid);
-                PiecesService.flipToBlack(GridHelper.getNeighbors45(columnClicked, rowClicked, grid), grid);
-                PiecesService.flipToBlack(GridHelper.getNeighbors90(columnClicked, rowClicked, grid), grid);
-                PiecesService.flipToBlack(GridHelper.getNeighbors135(columnClicked, rowClicked, grid), grid);
-                PiecesService.flipToBlack(GridHelper.getNeighbors180(columnClicked, rowClicked, grid), grid);
-                PiecesService.flipToBlack(GridHelper.getNeighbors225(columnClicked, rowClicked, grid), grid);
-                PiecesService.flipToBlack(GridHelper.getNeighbors270(columnClicked, rowClicked, grid), grid);
-                PiecesService.flipToBlack(GridHelper.getNeighbors315(columnClicked, rowClicked, grid), grid);
 
+
+            List<String> board = grid.getChildren().stream()
+                                                    .map(n-> n.getId())
+                                                    .filter(id -> id == null)
+                                                    .collect(Collectors.toList());
+
+
+
+            System.out.println("isMoveLegal "+isMoveLegalBlack);
+
+            if (blacksQuantity + whitesQuantity <64) {
+                if (!turn && isMoveLegalBlack) {
+                    playerMove(columnClicked, rowClicked, grid);
+                } else {
+                    PopUpWindow.moveNotPossible(randomComputerMove, grid);
+                    turn = false;
+                }
+
+                if (turn) {
+                    computerMove(randomComputerMove, grid);
+                } else {
+                    PopUpWindow.whiteCannotMove();
+                    turn = false;
+                }
             }
-
             blacksQuantity = PiecesService.countBlacks(grid);
-            whitesQuantity = PiecesService.countWhites(grid);
+            whitesQuantity = WhitePiecesService.countWhites(grid);
             blacksCounter.setText("Blacks: " + blacksQuantity);
             whitesCounter.setText("Whites: " + whitesQuantity);
+
+            if(blacksQuantity + whitesQuantity == 64) {
+                PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
+            } else if (blacksQuantity == 0){
+                PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
+            } else if (whitesQuantity == 0) {
+                PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
+            }
 
         });
 
@@ -103,6 +126,37 @@ public class OthelloGameApplication extends Application {
 
         primaryStage.show();
     }
+
+    public static void playerMove(int columnClicked, int rowClicked, GridPane grid){
+        PiecesService.turnPieceBlack(grid, columnClicked, rowClicked);
+        PiecesService.flipToBlack(GridHelper.getNeighbors00(columnClicked, rowClicked, grid), grid);
+        PiecesService.flipToBlack(GridHelper.getNeighbors45(columnClicked, rowClicked, grid), grid);
+        PiecesService.flipToBlack(GridHelper.getNeighbors90(columnClicked, rowClicked, grid), grid);
+        PiecesService.flipToBlack(GridHelper.getNeighbors135(columnClicked, rowClicked, grid), grid);
+        PiecesService.flipToBlack(GridHelper.getNeighbors180(columnClicked, rowClicked, grid), grid);
+        PiecesService.flipToBlack(GridHelper.getNeighbors225(columnClicked, rowClicked, grid), grid);
+        PiecesService.flipToBlack(GridHelper.getNeighbors270(columnClicked, rowClicked, grid), grid);
+        PiecesService.flipToBlack(GridHelper.getNeighbors315(columnClicked, rowClicked, grid), grid);
+        turn = true;
+    }
+
+    public static void computerMove(Node computerMove, GridPane grid) {
+
+        int columnComputer = GridPane.getColumnIndex(computerMove);
+        int rowComputer = GridPane.getRowIndex(computerMove);
+
+        PiecesService.turnPieceWhite(grid, columnComputer, rowComputer);
+        WhitePiecesService.flipToWhite(GridHelper.getNeighbors00(columnComputer, rowComputer, grid), grid);
+        WhitePiecesService.flipToWhite(GridHelper.getNeighbors45(columnComputer, rowComputer, grid), grid);
+        WhitePiecesService.flipToWhite(GridHelper.getNeighbors90(columnComputer, rowComputer, grid), grid);
+        WhitePiecesService.flipToWhite(GridHelper.getNeighbors135(columnComputer, rowComputer, grid), grid);
+        WhitePiecesService.flipToWhite(GridHelper.getNeighbors180(columnComputer, rowComputer, grid), grid);
+        WhitePiecesService.flipToWhite(GridHelper.getNeighbors225(columnComputer, rowComputer, grid), grid);
+        WhitePiecesService.flipToWhite(GridHelper.getNeighbors270(columnComputer, rowComputer, grid), grid);
+        WhitePiecesService.flipToWhite(GridHelper.getNeighbors315(columnComputer, rowComputer, grid), grid);
+        turn = false;
+    }
+
 
     public static void main(String[] args) {
         launch(args);

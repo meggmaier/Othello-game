@@ -92,13 +92,13 @@ public class PiecesService extends Parent {
             return false;
         }
 
-        if (!hasAtLeastOneEnemyInRange(col, row, grid)) {
+        if (!hasAtLeastOneWhiteInRange(col, row, grid)) {
             System.out.println("No neighbor as an enemy");
             return false;
         }
 
 
-        if (hasAtLeastOneEnemyInRange(col, row, grid)) {
+        if (hasAtLeastOneWhiteInRange(col, row, grid)) {
             return getBlackAfterWhiteListBoolean(col, row, grid).stream()
                     .anyMatch(hasBlack -> hasBlack);
         }
@@ -106,17 +106,42 @@ public class PiecesService extends Parent {
         return true;
     }
 
-    private static boolean hasAtLeastOneEnemyInRange(int col, int row, GridPane grid) {
-        List<String> neighborsIds = Arrays.asList(
-                GridHelper.getNeighbors00(col, row, grid).get(0).getId(),
-                GridHelper.getNeighbors45(col, row, grid).get(0).getId(),
-                GridHelper.getNeighbors90(col, row, grid).get(0).getId(),
-                GridHelper.getNeighbors135(col, row, grid).get(0).getId(),
-                GridHelper.getNeighbors180(col, row, grid).get(0).getId(),
-                GridHelper.getNeighbors225(col, row, grid).get(0).getId(),
-                GridHelper.getNeighbors270(col, row, grid).get(0).getId(),
-                GridHelper.getNeighbors315(col, row, grid).get(0).getId()
-        );
+    private static boolean hasAtLeastOneWhiteInRange(int col, int row, GridPane grid) {
+        List<Node> neighbors00 = GridHelper.getNeighbors00(col, row, grid);
+        List<Node> neighbors45 = GridHelper.getNeighbors45(col, row, grid);
+        List<Node> neighbors90 = GridHelper.getNeighbors90(col, row, grid);
+        List<Node> neighbors135 = GridHelper.getNeighbors135(col, row, grid);
+        List<Node> neighbors180 = GridHelper.getNeighbors180(col, row, grid);
+        List<Node> neighbors225 = GridHelper.getNeighbors225(col, row, grid);
+        List<Node> neighbors270 = GridHelper.getNeighbors270(col, row, grid);
+        List<Node> neighbors315 = GridHelper.getNeighbors315(col, row, grid);
+
+        List<String> neighborsIds = new ArrayList<>();
+
+        if(!neighbors00.isEmpty()){
+            neighborsIds.add(neighbors00.get(0).getId());
+        }
+        if(!neighbors45.isEmpty()){
+            neighborsIds.add(neighbors45.get(0).getId());
+        }
+        if(!neighbors90.isEmpty()){
+            neighborsIds.add(neighbors90.get(0).getId());
+        }
+        if(!neighbors135.isEmpty()){
+            neighborsIds.add(neighbors135.get(0).getId());
+        }
+        if(!neighbors180.isEmpty()){
+            neighborsIds.add(neighbors180.get(0).getId());
+        }
+        if(!neighbors225.isEmpty()){
+            neighborsIds.add(neighbors225.get(0).getId());
+        }
+        if(!neighbors270.isEmpty()){
+            neighborsIds.add(neighbors270.get(0).getId());
+        }
+        if(!neighbors315.isEmpty()){
+            neighborsIds.add(neighbors315.get(0).getId());
+        }
 
         return neighborsIds.stream()
                 .filter(id -> id != null)
@@ -125,27 +150,31 @@ public class PiecesService extends Parent {
 
 
     public static boolean hasBlackAfterWhite(List<Node> idList) {
-        if(idList.isEmpty()){
-            return false;
-        }
+
 
         boolean hasBlack = false;
-        String firstPiece = idList.get(0).getId();
+        String firstPiece;
+
+        if(idList.isEmpty()){
+            return hasBlack;
+        }
+
+        else {
+            firstPiece = idList.get(0).getId();
 
 
-        loop:
-        while (firstPiece != null && firstPiece.equals(WHITE_ID)) {
+            if (firstPiece != null && firstPiece.equals(WHITE_ID)) {
 
-            for (int i = 0; i < idList.size() - 1; i++) {
-                String nextPiece = idList.get(i + 1).getId();
+                for (int i = 0; i < idList.size() - 1; i++) {
+                    String nextPiece = idList.get(i + 1).getId();
 
-                if (nextPiece == null) {
-                    return hasBlack;
-                }
+                    if (nextPiece == null) {
+                        return hasBlack;
+                    }
 
-                if (nextPiece.equals(BLACK_ID)) {
-                    hasBlack = true;
-                    break loop;
+                    if (nextPiece.equals(BLACK_ID)) {
+                        hasBlack = true;
+                    }
                 }
             }
         }
@@ -153,31 +182,7 @@ public class PiecesService extends Parent {
         return hasBlack;
     }
 
-    public static boolean hasWhiteAfterBlack(List<Node> idList) {
 
-        boolean hasWhite = false;
-        String firstPiece = idList.get(0).getId();
-
-
-        loop:
-        while (firstPiece != null && firstPiece.equals(BLACK_ID)) {
-
-            for (int i = 0; i < idList.size() - 1; i++) {
-                String nextPiece = idList.get(i + 1).getId();
-
-                if (nextPiece == null) {
-                    return hasWhite;
-                }
-
-                if (nextPiece.equals(WHITE_ID)) {
-                    hasWhite = true;
-                    break loop;
-                }
-            }
-        }
-
-        return hasWhite;
-    }
 
     public static List<Boolean> getBlackAfterWhiteListBoolean(int col, int row, GridPane grid) {
         List<Boolean> hasBlackAfterWhiteList = Arrays.asList(
@@ -228,19 +233,7 @@ public class PiecesService extends Parent {
                 .count();
     }
 
-    public static long countWhites(GridPane grid) {
 
-        List<String> blacks = new ArrayList<>();
-
-        for (Node piece : grid.getChildren()) {
-            if (piece.getId() != null) {
-                blacks.add(piece.getId());
-            }
-        }
-        return blacks.stream()
-                .filter(id -> id.equals(WHITE_ID))
-                .count();
-    }
 
 
 }
