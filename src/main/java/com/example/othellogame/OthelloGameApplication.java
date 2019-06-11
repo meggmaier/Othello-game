@@ -80,15 +80,6 @@ public class OthelloGameApplication extends Application {
             boolean isMoveLegalBlack = PiecesService.isMoveLegal(columnClicked, rowClicked, grid);
             Node randomComputerMove = WhitePiecesService.calculateComputerMove(grid);
 
-
-
-            List<String> board = grid.getChildren().stream()
-                                                    .map(n-> n.getId())
-                                                    .filter(id -> id == null)
-                                                    .collect(Collectors.toList());
-
-
-
             System.out.println("isMoveLegal "+isMoveLegalBlack);
 
             if (blacksQuantity + whitesQuantity <64) {
@@ -98,7 +89,6 @@ public class OthelloGameApplication extends Application {
                     PopUpWindow.moveNotPossible(randomComputerMove, grid);
                     turn = false;
                 }
-
                 if (turn) {
                     computerMove(randomComputerMove, grid);
                 } else {
