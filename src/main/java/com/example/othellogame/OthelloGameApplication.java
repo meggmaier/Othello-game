@@ -71,18 +71,21 @@ public class OthelloGameApplication extends Application {
         root.getChildren().add(grid);
 
         Scene scene = new Scene(root, 400, 430, Color.BLACK);
-        scene.setOnMouseClicked((event) -> {
-            double mouseX = event.getX();
-            double mouseY = event.getY();
-            int columnClicked = (int)Math.floor(mouseX / 50);
-            int rowClicked = (int)Math.floor(mouseY / 50);
 
-            boolean isMoveLegalBlack = PiecesService.isMoveLegal(columnClicked, rowClicked, grid);
-            Node randomComputerMove = WhitePiecesService.calculateComputerMove(grid);
 
-            System.out.println("isMoveLegal "+isMoveLegalBlack);
 
-            if (blacksQuantity + whitesQuantity <64) {
+            scene.setOnMouseClicked((event) -> {
+                double mouseX = event.getX();
+                double mouseY = event.getY();
+                int columnClicked = (int) Math.floor(mouseX / 50);
+                int rowClicked = (int) Math.floor(mouseY / 50);
+
+                boolean isMoveLegalBlack = PiecesService.isMoveLegal(columnClicked, rowClicked, grid);
+                Node randomComputerMove = WhitePiecesService.calculateComputerMove(grid);
+
+                System.out.println("isMoveLegal " + isMoveLegalBlack);
+
+
                 if (!turn && isMoveLegalBlack) {
                     playerMove(columnClicked, rowClicked, grid);
                 } else {
@@ -95,21 +98,27 @@ public class OthelloGameApplication extends Application {
                     PopUpWindow.whiteCannotMove();
                     turn = false;
                 }
-            }
-            blacksQuantity = PiecesService.countBlacks(grid);
-            whitesQuantity = WhitePiecesService.countWhites(grid);
-            blacksCounter.setText("Blacks: " + blacksQuantity);
-            whitesCounter.setText("Whites: " + whitesQuantity);
 
-            if(blacksQuantity + whitesQuantity == 64) {
-                PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
-            } else if (blacksQuantity == 0){
-                PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
-            } else if (whitesQuantity == 0) {
-                PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
-            }
 
-        });
+                blacksQuantity = PiecesService.countBlacks(grid);
+                whitesQuantity = WhitePiecesService.countWhites(grid);
+                blacksCounter.setText("Blacks: " + blacksQuantity);
+                whitesCounter.setText("Whites: " + whitesQuantity);
+
+                long pointsSum = blacksQuantity + whitesQuantity;
+
+                if (pointsSum == 64) {
+                    PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
+                }
+                if (whitesQuantity > 1 && blacksQuantity == 0){
+                    PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
+                }
+                if (blacksQuantity >1 && whitesQuantity == 0) {
+                    PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
+                }
+            });
+
+
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("Othello Game");

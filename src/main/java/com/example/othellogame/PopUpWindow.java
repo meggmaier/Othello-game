@@ -81,13 +81,7 @@ public class PopUpWindow {
         Label matchResult = new Label();
         Button congrats = new Button();
         VBox layout = new VBox();
-
-        layout.getChildren().addAll(matchResult, congrats);
-
-        Scene scene1= new Scene(layout, 150, 50);
-
-        popUpWindow.setScene(scene1);
-        popUpWindow.showAndWait();
+        layout.setAlignment(Pos.CENTER);
 
         //if player win
         if (black>white || white == 0){
@@ -122,7 +116,11 @@ public class PopUpWindow {
                 popUpWindow.close();
             });
 
+            layout.getChildren().addAll(matchResult, congrats);
 
+            Scene scene1= new Scene(layout, 150, 50);
+            popUpWindow.setScene(scene1);
+            popUpWindow.showAndWait();
         }
 
 
