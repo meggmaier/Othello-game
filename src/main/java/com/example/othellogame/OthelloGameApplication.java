@@ -14,8 +14,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 
 @SpringBootApplication
@@ -31,7 +30,7 @@ public class OthelloGameApplication extends Application {
     private long blacksQuantity;
     private Label whitesCounter = new Label("Whites: 0");
     private Label blacksCounter = new Label("Blacks: 0");
-    private static boolean turn = false;
+    private static boolean computerTurn = false;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -73,51 +72,52 @@ public class OthelloGameApplication extends Application {
         Scene scene = new Scene(root, 400, 430, Color.BLACK);
 
 
+        scene.setOnMouseClicked((event) -> {
+            double mouseX = event.getX();
+            double mouseY = event.getY();
+            int columnClicked = (int) Math.floor(mouseX / 50);
+            int rowClicked = (int) Math.floor(mouseY / 50);
 
-            scene.setOnMouseClicked((event) -> {
-                double mouseX = event.getX();
-                double mouseY = event.getY();
-                int columnClicked = (int) Math.floor(mouseX / 50);
-                int rowClicked = (int) Math.floor(mouseY / 50);
+            boolean isMoveLegalBlack = PiecesService.isMoveLegal(columnClicked, rowClicked, grid);
 
-                boolean isMoveLegalBlack = PiecesService.isMoveLegal(columnClicked, rowClicked, grid);
+            System.out.println("isMoveLegal " + isMoveLegalBlack);
+
+
+            if (!computerTurn && isMoveLegalBlack) {
+                playerMove(columnClicked, rowClicked, grid);
+
+            } else {
                 Node randomComputerMove = WhitePiecesService.calculateComputerMove(grid);
-
-                System.out.println("isMoveLegal " + isMoveLegalBlack);
-
-
-                if (!turn && isMoveLegalBlack) {
-                    playerMove(columnClicked, rowClicked, grid);
-                } else {
-                    PopUpWindow.moveNotPossible(randomComputerMove, grid);
-                    turn = false;
-                }
-                if (turn) {
-                    computerMove(randomComputerMove, grid);
-                } else {
-                    PopUpWindow.whiteCannotMove();
-                    turn = false;
-                }
+                PopUpWindow.moveNotPossible(randomComputerMove, grid);
+                computerTurn = false;
+            }
+            if (computerTurn) {
+                Node randomComputerMove = WhitePiecesService.calculateComputerMove(grid);
+                computerMove(randomComputerMove, grid);
+            } else {
+                PopUpWindow.whiteCannotMove();
+                computerTurn = false;
+            }
 
 
-                blacksQuantity = PiecesService.countBlacks(grid);
-                whitesQuantity = WhitePiecesService.countWhites(grid);
-                blacksCounter.setText("Blacks: " + blacksQuantity);
-                whitesCounter.setText("Whites: " + whitesQuantity);
+            blacksQuantity = PiecesService.countBlacks(grid);
+            whitesQuantity = WhitePiecesService.countWhites(grid);
+            blacksCounter.setText("Blacks: " + blacksQuantity);
+            whitesCounter.setText("Whites: " + whitesQuantity);
 
-                long pointsSum = blacksQuantity + whitesQuantity;
+            long pointsSum = blacksQuantity + whitesQuantity;
+            System.out.println("Points sum " + pointsSum);
 
-                if (pointsSum == 64) {
-                    PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
-                }
-                if (whitesQuantity > 1 && blacksQuantity == 0){
-                    PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
-                }
-                if (blacksQuantity >1 && whitesQuantity == 0) {
-                    PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
-                }
-            });
-
+            if (pointsSum == 64) {
+                PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
+            }
+            if (whitesQuantity > 1 && blacksQuantity == 0) {
+                PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
+            }
+            if (blacksQuantity > 1 && whitesQuantity == 0) {
+                PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
+            }
+        });
 
 
         primaryStage.setScene(scene);
@@ -126,7 +126,7 @@ public class OthelloGameApplication extends Application {
         primaryStage.show();
     }
 
-    public static void playerMove(int columnClicked, int rowClicked, GridPane grid){
+    public static void playerMove(int columnClicked, int rowClicked, GridPane grid) {
         PiecesService.turnPieceBlack(grid, columnClicked, rowClicked);
         PiecesService.flipToBlack(GridHelper.getNeighbors00(columnClicked, rowClicked, grid), grid);
         PiecesService.flipToBlack(GridHelper.getNeighbors45(columnClicked, rowClicked, grid), grid);
@@ -136,24 +136,34 @@ public class OthelloGameApplication extends Application {
         PiecesService.flipToBlack(GridHelper.getNeighbors225(columnClicked, rowClicked, grid), grid);
         PiecesService.flipToBlack(GridHelper.getNeighbors270(columnClicked, rowClicked, grid), grid);
         PiecesService.flipToBlack(GridHelper.getNeighbors315(columnClicked, rowClicked, grid), grid);
-        turn = true;
+        computerTurn = true;
     }
 
     public static void computerMove(Node computerMove, GridPane grid) {
 
-        int columnComputer = GridPane.getColumnIndex(computerMove);
-        int rowComputer = GridPane.getRowIndex(computerMove);
+//        new Thread(() -> {
 
-        PiecesService.turnPieceWhite(grid, columnComputer, rowComputer);
-        WhitePiecesService.flipToWhite(GridHelper.getNeighbors00(columnComputer, rowComputer, grid), grid);
-        WhitePiecesService.flipToWhite(GridHelper.getNeighbors45(columnComputer, rowComputer, grid), grid);
-        WhitePiecesService.flipToWhite(GridHelper.getNeighbors90(columnComputer, rowComputer, grid), grid);
-        WhitePiecesService.flipToWhite(GridHelper.getNeighbors135(columnComputer, rowComputer, grid), grid);
-        WhitePiecesService.flipToWhite(GridHelper.getNeighbors180(columnComputer, rowComputer, grid), grid);
-        WhitePiecesService.flipToWhite(GridHelper.getNeighbors225(columnComputer, rowComputer, grid), grid);
-        WhitePiecesService.flipToWhite(GridHelper.getNeighbors270(columnComputer, rowComputer, grid), grid);
-        WhitePiecesService.flipToWhite(GridHelper.getNeighbors315(columnComputer, rowComputer, grid), grid);
-        turn = false;
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            int columnComputer = GridPane.getColumnIndex(computerMove);
+            int rowComputer = GridPane.getRowIndex(computerMove);
+
+            PiecesService.turnPieceWhite(grid, columnComputer, rowComputer);
+            WhitePiecesService.flipToWhite(GridHelper.getNeighbors00(columnComputer, rowComputer, grid), grid);
+            WhitePiecesService.flipToWhite(GridHelper.getNeighbors45(columnComputer, rowComputer, grid), grid);
+            WhitePiecesService.flipToWhite(GridHelper.getNeighbors90(columnComputer, rowComputer, grid), grid);
+            WhitePiecesService.flipToWhite(GridHelper.getNeighbors135(columnComputer, rowComputer, grid), grid);
+            WhitePiecesService.flipToWhite(GridHelper.getNeighbors180(columnComputer, rowComputer, grid), grid);
+            WhitePiecesService.flipToWhite(GridHelper.getNeighbors225(columnComputer, rowComputer, grid), grid);
+            WhitePiecesService.flipToWhite(GridHelper.getNeighbors270(columnComputer, rowComputer, grid), grid);
+            WhitePiecesService.flipToWhite(GridHelper.getNeighbors315(columnComputer, rowComputer, grid), grid);
+//        }).start();
+
+
+        computerTurn = false;
     }
 
 

@@ -10,14 +10,15 @@ import javafx.scene.shape.Rectangle;
 
 public class Board {
 
+    public static final int ELEMENT_HEIGHT = 50;
     private Image rectangleBack = new Image("background/table.jpg");
 
-    public Group createRectangle(){
+    public Group createRectangle() {
         ImageView back = new ImageView(rectangleBack);
         Group rectangle = new Group();
         Rectangle r = new Rectangle(50, 50);
         r.setFill(Color.BLACK);
-        back.setFitHeight(50);
+        back.setFitHeight(ELEMENT_HEIGHT);
         back.setFitWidth(50);
         back.setX(0);
         back.setY(0);
@@ -26,7 +27,7 @@ public class Board {
         return rectangle;
     }
 
-    public VBox createBoard(){
+    public VBox createBoard() {
         VBox board = new VBox();
         HBox row1 = new HBox();
         HBox row2 = new HBox();
@@ -37,7 +38,7 @@ public class Board {
         HBox row7 = new HBox();
         HBox row8 = new HBox();
 
-        for(int i=0;i<8;i++){
+        for (int i = 0; i < 8; i++) {
             row1.getChildren().add(createRectangle());
             row2.getChildren().add(createRectangle());
             row3.getChildren().add(createRectangle());
