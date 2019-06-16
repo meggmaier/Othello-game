@@ -14,8 +14,11 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
+import static com.example.othellogame.PiecesService.BLACK_ID;
+import static com.example.othellogame.PiecesService.WHITE_ID;
+import static com.example.othellogame.Board.ELEMENT_MEASUREMENT;
 
 @SpringBootApplication
 public class OthelloGameApplication extends Application {
@@ -42,7 +45,6 @@ public class OthelloGameApplication extends Application {
         whitesCounter.setFont(new Font("Arial", 24));
         whitesCounter.setTextFill(Color.WHITE);
 
-
         lowBar.getChildren().add(newGameBtn);
         newGameBtn.setOnAction((e) -> {
             int gridSize = grid.getChildren().size();
@@ -52,11 +54,7 @@ public class OthelloGameApplication extends Application {
             } else {
                 PiecesService.setOnStartingPositions(grid);
             }
-            blacksQuantity = PiecesService.countBlacks(grid);
-            whitesQuantity = WhitePiecesService.countWhites(grid);
-
-            blacksCounter.setText("Blacks: " + blacksQuantity);
-            whitesCounter.setText("Whites: " + whitesQuantity);
+            showPoints();
         });
         newGameBtn.setPrefWidth(100);
 
@@ -71,42 +69,31 @@ public class OthelloGameApplication extends Application {
 
         Scene scene = new Scene(root, 400, 430, Color.BLACK);
 
-
         scene.setOnMouseClicked((event) -> {
             double mouseX = event.getX();
             double mouseY = event.getY();
-            int columnClicked = (int) Math.floor(mouseX / 50);
-            int rowClicked = (int) Math.floor(mouseY / 50);
+            int columnClicked = (int) Math.floor(mouseX / ELEMENT_MEASUREMENT);
+            int rowClicked = (int) Math.floor(mouseY / ELEMENT_MEASUREMENT);
 
-            boolean isMoveLegalBlack = PiecesService.isMoveLegal(columnClicked, rowClicked, grid);
+            boolean isBlackMoveLegal = Validator.isMoveLegal(columnClicked, rowClicked, grid, BLACK_ID, WHITE_ID);
+            System.out.println("isMoveLegal " + isBlackMoveLegal);
 
-            System.out.println("isMoveLegal " + isMoveLegalBlack);
-
-
-            if (!computerTurn && isMoveLegalBlack) {
+            if (!computerTurn && isBlackMoveLegal) {
                 playerMove(columnClicked, rowClicked, grid);
 
             } else {
-                Node randomComputerMove = WhitePiecesService.calculateComputerMove(grid);
+                Node randomComputerMove = WhitePiecesService.calculateComputerMove(grid, WHITE_ID, BLACK_ID);
                 PopUpWindow.moveNotPossible(randomComputerMove, grid);
                 computerTurn = false;
             }
+
             if (computerTurn) {
-                Node randomComputerMove = WhitePiecesService.calculateComputerMove(grid);
+                Node randomComputerMove = WhitePiecesService.calculateComputerMove(grid, WHITE_ID, BLACK_ID);
                 computerMove(randomComputerMove, grid);
-            } else {
-                PopUpWindow.whiteCannotMove();
-                computerTurn = false;
             }
 
-
-            blacksQuantity = PiecesService.countBlacks(grid);
-            whitesQuantity = WhitePiecesService.countWhites(grid);
-            blacksCounter.setText("Blacks: " + blacksQuantity);
-            whitesCounter.setText("Whites: " + whitesQuantity);
-
+            showPoints();
             long pointsSum = blacksQuantity + whitesQuantity;
-            System.out.println("Points sum " + pointsSum);
 
             if (pointsSum == 64) {
                 PopUpWindow.matchResult(blacksQuantity, whitesQuantity, grid);
@@ -119,7 +106,6 @@ public class OthelloGameApplication extends Application {
             }
         });
 
-
         primaryStage.setScene(scene);
         primaryStage.setTitle("Othello Game");
 
@@ -128,45 +114,41 @@ public class OthelloGameApplication extends Application {
 
     public static void playerMove(int columnClicked, int rowClicked, GridPane grid) {
         PiecesService.turnPieceBlack(grid, columnClicked, rowClicked);
-        PiecesService.flipToBlack(GridHelper.getNeighbors00(columnClicked, rowClicked, grid), grid);
-        PiecesService.flipToBlack(GridHelper.getNeighbors45(columnClicked, rowClicked, grid), grid);
-        PiecesService.flipToBlack(GridHelper.getNeighbors90(columnClicked, rowClicked, grid), grid);
-        PiecesService.flipToBlack(GridHelper.getNeighbors135(columnClicked, rowClicked, grid), grid);
-        PiecesService.flipToBlack(GridHelper.getNeighbors180(columnClicked, rowClicked, grid), grid);
-        PiecesService.flipToBlack(GridHelper.getNeighbors225(columnClicked, rowClicked, grid), grid);
-        PiecesService.flipToBlack(GridHelper.getNeighbors270(columnClicked, rowClicked, grid), grid);
-        PiecesService.flipToBlack(GridHelper.getNeighbors315(columnClicked, rowClicked, grid), grid);
+        List<List> allNeighbors = GridHelper.getAllNeighbors(columnClicked, rowClicked, grid);
+
+        for (List<Node> neighbors : allNeighbors) {
+            PiecesService.flipToColor(neighbors, grid, BLACK_ID, WHITE_ID);
+        }
         computerTurn = true;
     }
 
     public static void computerMove(Node computerMove, GridPane grid) {
 
-//        new Thread(() -> {
+        int columnComputer = GridPane.getColumnIndex(computerMove);
+        int rowComputer = GridPane.getRowIndex(computerMove);
+        boolean isComputerMoveLegal = Validator.isMoveLegal(columnComputer, rowComputer, grid, WHITE_ID, BLACK_ID);
 
-            try {
-                TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            int columnComputer = GridPane.getColumnIndex(computerMove);
-            int rowComputer = GridPane.getRowIndex(computerMove);
-
+        if (isComputerMoveLegal) {
             PiecesService.turnPieceWhite(grid, columnComputer, rowComputer);
-            WhitePiecesService.flipToWhite(GridHelper.getNeighbors00(columnComputer, rowComputer, grid), grid);
-            WhitePiecesService.flipToWhite(GridHelper.getNeighbors45(columnComputer, rowComputer, grid), grid);
-            WhitePiecesService.flipToWhite(GridHelper.getNeighbors90(columnComputer, rowComputer, grid), grid);
-            WhitePiecesService.flipToWhite(GridHelper.getNeighbors135(columnComputer, rowComputer, grid), grid);
-            WhitePiecesService.flipToWhite(GridHelper.getNeighbors180(columnComputer, rowComputer, grid), grid);
-            WhitePiecesService.flipToWhite(GridHelper.getNeighbors225(columnComputer, rowComputer, grid), grid);
-            WhitePiecesService.flipToWhite(GridHelper.getNeighbors270(columnComputer, rowComputer, grid), grid);
-            WhitePiecesService.flipToWhite(GridHelper.getNeighbors315(columnComputer, rowComputer, grid), grid);
-//        }).start();
+            List<List> allNeighbors = GridHelper.getAllNeighbors(columnComputer, rowComputer, grid);
 
-
-        computerTurn = false;
+            for (List<Node> neighbors : allNeighbors) {
+                PiecesService.flipToColor(neighbors, grid, WHITE_ID, BLACK_ID);
+            }
+            computerTurn = false;
+        }
+        else {
+            PopUpWindow.whiteCannotMove();
+            computerTurn = false;
+        }
     }
+    public void showPoints(){
+        blacksQuantity = PiecesService.countPieces(grid, BLACK_ID);
+        whitesQuantity = PiecesService.countPieces(grid, WHITE_ID);
 
-
+        blacksCounter.setText("Blacks: " + blacksQuantity);
+        whitesCounter.setText("Whites: " + whitesQuantity);
+    }
     public static void main(String[] args) {
         launch(args);
     }

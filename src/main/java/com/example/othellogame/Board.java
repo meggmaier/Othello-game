@@ -10,7 +10,7 @@ import javafx.scene.shape.Rectangle;
 
 public class Board {
 
-    public static final int ELEMENT_HEIGHT = 50;
+    public static final int ELEMENT_MEASUREMENT = 50;
     private Image rectangleBack = new Image("background/table.jpg");
 
     public Group createRectangle() {
@@ -18,8 +18,8 @@ public class Board {
         Group rectangle = new Group();
         Rectangle r = new Rectangle(50, 50);
         r.setFill(Color.BLACK);
-        back.setFitHeight(ELEMENT_HEIGHT);
-        back.setFitWidth(50);
+        back.setFitHeight(ELEMENT_MEASUREMENT);
+        back.setFitWidth(ELEMENT_MEASUREMENT);
         back.setX(0);
         back.setY(0);
         rectangle.getChildren().add(r);

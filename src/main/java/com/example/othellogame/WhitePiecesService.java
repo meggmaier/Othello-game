@@ -1,11 +1,8 @@
 package com.example.othellogame;
 
 import javafx.scene.Node;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -20,13 +17,13 @@ public class WhitePiecesService {
 
         List<Node> availableFields = grid.getChildren().stream()
                 .filter(el -> el.getId() == null)
-                .filter(f-> Validator.isMoveLegal(GridPane.getColumnIndex(f), GridPane.getRowIndex(f), grid, currentPlayerID, opponentID))
+                .filter(f -> Validator.isMoveLegal(GridPane.getColumnIndex(f), GridPane.getRowIndex(f), grid, currentPlayerID, opponentID))
                 .collect(Collectors.toList());
 
         if (availableFields.isEmpty()) {
             PopUpWindow.whiteCannotMove();
         }
-        if(availableFields.size()>1) {
+        if(availableFields.size() > 1) {
             randomMove = availableFields.get(RANDOM.nextInt(availableFields.size()-1));
         }
         if (availableFields.size() == 1) {

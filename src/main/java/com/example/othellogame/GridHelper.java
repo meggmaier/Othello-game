@@ -5,6 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -145,6 +146,20 @@ public class GridHelper {
         return neighbors315;
     }
 
+    public static List<List> getAllNeighbors(int col, int row, GridPane grid) {
+        List<List> allNeighbors = Arrays.asList(
+            getNeighbors00(col, row, grid),
+            getNeighbors45(col, row, grid),
+            getNeighbors90(col, row, grid),
+            getNeighbors135(col, row, grid),
+            getNeighbors180(col, row, grid),
+            getNeighbors225(col, row, grid),
+            getNeighbors270(col, row, grid),
+            getNeighbors315(col, row, grid)
+        );
+        return allNeighbors;
+    }
+
     public static Node getIdByColumnRowIndex(int column, int row, GridPane gridPane) {
         Node result = null;
         ObservableList<Node> children = gridPane.getChildren();
@@ -155,7 +170,6 @@ public class GridHelper {
                 break;
             }
         }
-
         return result;
     }
 

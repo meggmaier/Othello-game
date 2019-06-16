@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 public class PiecesService extends Parent {
 
-    private static final String WHITE_ID = "01";
-    private static final String BLACK_ID = "02";
+    public static final String WHITE_ID = "01";
+    public static final String BLACK_ID = "02";
 
     static ImageView createEmpty() {
         Image emptyBack = new Image("pieces/empty.png");
